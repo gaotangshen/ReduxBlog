@@ -1,19 +1,45 @@
+import _ from 'lodash';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { feachPosts } from '../actions';
+import { fetchPosts } from '../actions';
+import { Link } from 'react-router-dom';
 
 class BlogIndex extends Component {
   componentDidMount() {
-    this.props.feachPosts();
+    this.props.fetchPosts();
+  }
+
+  renderPost() {
+    return _.map(this.props.blogs, (blog) => {
+      return (
+        <li className="list-group-item" key={blog.id}>
+          <Link to={`/blog/${blog.id}`}> 
+            {blog.title}
+          </Link>
+        </li>
+      );
+    });
   }
 
   render() {
     return (
       <div>
-        blog index
+        <div className="text-xs-right">
+          <Link to="/blog/new" className="btn btn-primary">
+            Add New Blog
+          </Link>
+        </div>
+        <h3>Posts</h3>
+        <ul className="list-group">
+          {this.renderPost()}
+        </ul>
       </div>
     );
   }
 }
 
-export default connect(null, { feachPosts })(BlogIndex); // shortcut of mapDispachToProps.
+function mapStateToProps({ blogs }) {
+  return { blogs };
+}
+
+export default connect(mapStateToProps, { fetchPosts })(BlogIndex); // shortcut of mapDispachToProps.
